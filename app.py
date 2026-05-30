@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request
 import os
 import subprocess
+import sys
 
 app = Flask(__name__)
 
@@ -37,7 +38,7 @@ def run_all():
 
         # Run PPT1
         result1 = subprocess.run(
-            ["python", "ppt1.py", file_path],
+            [sys.executable, "ppt1.py", file_path],
             capture_output=True,
             text=True
         )
@@ -47,7 +48,7 @@ def run_all():
 
         # Run PPT2
         result2 = subprocess.run(
-            ["python", "ppt2.py", file_path],
+            [sys.executable, "ppt2.py", file_path],
             capture_output=True,
             text=True
         )
@@ -57,7 +58,7 @@ def run_all():
 
         # Run PPT3
         result3 = subprocess.run(
-            ["python", "ppt3.py", file_path],
+            [sys.executable, "ppt3.py", file_path],
             capture_output=True,
             text=True
         )
