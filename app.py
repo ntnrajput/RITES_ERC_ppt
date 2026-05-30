@@ -4,8 +4,12 @@ import subprocess
 
 app = Flask(__name__)
 
+
 UPLOAD_FOLDER = "uploads"
+OUTPUT_FOLDER = "output"
+
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+os.makedirs(OUTPUT_FOLDER, exist_ok=True)
 
 @app.route("/")
 def home():
@@ -73,5 +77,5 @@ def run_all():
         return str(e)
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=5000)
     
