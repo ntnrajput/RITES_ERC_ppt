@@ -1,6 +1,8 @@
-flask
+Flask
+gunicorn
 pandas
+numpy
 openpyxl
 matplotlib
 python-pptx
-numpy
+Pillow
