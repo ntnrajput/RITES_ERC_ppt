@@ -44,11 +44,28 @@ def normalize_month(val):
         return text   # fallback if still bad
 
 # ================== PATHS ==================
+# ================== PATHS ==================
+
 excel_file = sys.argv[1]
 sheet_name = "Copy of Final Month Wise Defect"
 
-template_ppt = "RITES_Template.pptx"
-output_ppt = "ERC_Defect_Analysis_RITES_FINAL.pptx"
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+template_ppt = os.path.join(
+    BASE_DIR,
+    "RITES_Template.pptx"
+)
+
+OUTPUT_DIR = os.path.join(BASE_DIR, "output")
+os.makedirs(OUTPUT_DIR, exist_ok=True)
+
+CHARTS_DIR = os.path.join(BASE_DIR, "charts")
+os.makedirs(CHARTS_DIR, exist_ok=True)
+
+output_ppt = os.path.join(
+    OUTPUT_DIR,
+    "ERC_Defect_Analysis_RITES_FINAL.pptx"
+)
 
 # ================== READ EXCEL ==================
 
@@ -195,7 +212,11 @@ def plot_best_worst_performers(df, img_path, mode="best", top_n=8):
 def add_best_worst_slides(prs, base_slide, df):
 
     # -------- BEST PERFORMERS --------
-    best_img = "charts/best_performers.png"
+    
+    best_img = os.path.join(
+        CHARTS_DIR,
+        "best_performers.png"
+    )
     plot_best_worst_performers(df, best_img, mode="best", top_n=8)
 
     slide1 = duplicate_slide(prs, base_slide)
@@ -219,7 +240,10 @@ def add_best_worst_slides(prs, base_slide, df):
     )
 
     # -------- WORST PERFORMERS --------
-    worst_img = "charts/worst_performers.png"
+    worst_img = os.path.join(
+        CHARTS_DIR,
+        "worst_performers.png"
+    )
     plot_best_worst_performers(df, worst_img, mode="worst", top_n=8)
 
     slide2 = duplicate_slide(prs, base_slide)
@@ -326,7 +350,8 @@ plants = sorted(
     .astype(str)       # ensure all strings
     .unique()
 )
-os.makedirs("charts", exist_ok=True)
+
+os.makedirs(CHARTS_DIR, exist_ok=True)
 
 # ================== DUPLICATE SLIDE ==================
 
@@ -713,7 +738,11 @@ def add_spider_chart_slide(prs, df):
 
     plant_summary = get_plant_rejection_summary(df)
 
-    img_path = "charts/spider_rejection_gt_1.png"
+    
+    img_path = os.path.join(
+        CHARTS_DIR,
+        "spider_rejection_gt_1.png"
+    )
     success = plot_spider_chart(plant_summary, img_path)
 
     if not success:
@@ -802,7 +831,10 @@ def plot_pareto_chart(df_long, img_path, top_n=None):
 
 def add_pareto_slide(prs, base_slide, df_long):
 
-    img_path = "charts/pareto_defects.png"
+    img_path = os.path.join(
+        CHARTS_DIR,
+        "pareto_defects.png"
+    )
     plot_pareto_chart(df_long, img_path)
 
     # ✅ DUPLICATE TEMPLATE (SAFE HERE)
@@ -1007,7 +1039,11 @@ def add_erc_overview_slide(prs, base_slide, df, df_long):
     ).fillna(0)
 
     # ---------- PIE ----------
-    pie_path = "charts/overall_defect_pie.png"
+   
+    pie_path = os.path.join(
+        CHARTS_DIR,
+        "overall_defect_pie.png"
+    )
     plot_overall_defect_pie(df_long, pie_path)
 
     # ---------- SLIDE ----------
@@ -1084,7 +1120,10 @@ def add_erc_overview_slide(prs, base_slide, df, df_long):
 
 def add_top_performing_units_slide(prs, base_slide, df):
 
-    img_path = "charts/top_performing_units.png"
+    img_path = os.path.join(
+        CHARTS_DIR,
+        "top_performing_units.png"
+    )
     plot_top_performing_units(df, img_path)
 
     # ✅ Duplicate RITES template
@@ -1153,7 +1192,11 @@ for i in range(0, len(plants), 2):
             .sum().sort_values(ascending=False)
         )
 
-        img_path = f"charts/{plant.replace('/', '_').replace(',', '')}.png"
+        
+        img_path = os.path.join(
+            CHARTS_DIR,
+            f"{plant.replace('/', '_').replace(',', '')}.png"
+        )
         plot_clean_donut(summary, plant, img_path, color_map=slide_color_map)
         
         # shifting right or second chart to right
@@ -1216,6 +1259,8 @@ prs.slides._sldIdLst.remove(prs.slides._sldIdLst[0])
 prs.save(output_ppt)
 
 print(" FINAL RITES PPT created:", output_ppt)
+print("Saved PPT:", output_ppt)
+print("Exists:", os.path.exists(output_ppt))
 
 
 
