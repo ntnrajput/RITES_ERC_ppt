@@ -2,6 +2,7 @@ from flask import Flask, render_template, request
 import os
 import subprocess
 import sys
+from flask import send_from_directory
 
 app = Flask(__name__)
 
@@ -11,6 +12,14 @@ OUTPUT_FOLDER = "output"
 
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 os.makedirs(OUTPUT_FOLDER, exist_ok=True)
+
+@app.route('/download/<filename>')
+def download_file(filename):
+    return send_from_directory(
+        'output',
+        filename,
+        as_attachment=True
+    )
 
 @app.route("/")
 def home():
@@ -67,12 +76,24 @@ def run_all():
             return f"<pre>PPT3 Error\n\n{result3.stderr}</pre>"
 
         return """
-        <h2>Success</h2>
-        <p>PPT1 Generated</p>
-        <p>PPT2 Generated</p>
-        <p>PPT3 Generated</p>
-        <a href="/">Back</a>
-        """
+            <h2>Success</h2>
+
+            <a href="/download/PPT1_Report.pptx">
+            Download PPT1
+            </a>
+
+            <br><br>
+
+            <a href="/download/PPT2_Report.pptx">
+            Download PPT2
+            </a>
+
+            <br><br>
+
+            <a href="/download/PPT3_Report.pptx">
+            Download PPT3
+            </a>
+            """
 
     except Exception as e:
         return str(e)
