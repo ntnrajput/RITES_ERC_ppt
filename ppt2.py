@@ -8,8 +8,20 @@ from pptx.util import Inches, Pt
 from pptx.enum.shapes import MSO_SHAPE_TYPE
 import copy
 
-template_ppt = "RITES_Template.pptx"
-output_ppt = "Vendor_PO_Quality_Analysis.pptx"
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+template_ppt = os.path.join(
+    BASE_DIR,
+    "RITES_Template.pptx"
+)
+
+OUTPUT_DIR = os.path.join(BASE_DIR, "output")
+os.makedirs(OUTPUT_DIR, exist_ok=True)
+
+output_ppt = os.path.join(
+    OUTPUT_DIR,
+    "Vendor_PO_Quality_Analysis.pptx"
+)
 
 if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8")
@@ -75,10 +87,15 @@ def prepare_po_chart_data(df_vendor):
 
 
 def build_chart_path(folder, base_name, max_length=40):
+
+    folder = os.path.join(BASE_DIR, folder)
+
     os.makedirs(folder, exist_ok=True)
+
     safe_name = re.sub(r'[<>:"/\\\\|?*]', "_", str(base_name))
     safe_name = re.sub(r"\s+", " ", safe_name).strip(" .")
     safe_name = safe_name[:max_length].rstrip(" .") or "chart"
+
     file_path = os.path.join(folder, f"{safe_name}.png")
 
     if os.path.exists(file_path):
@@ -389,7 +406,9 @@ print("✅ Chart saved: vendor_po_count.png")
 # =========================
 # 6️⃣ CHART 2 – PO-WISE QUALITY (PER VENDOR)
 # =========================
-os.makedirs("po_charts", exist_ok=True)
+
+PO_CHART_DIR = os.path.join(BASE_DIR, "po_charts")
+os.makedirs(PO_CHART_DIR, exist_ok=True)
 
 def plot_po_quality(vendor_name, df_vendor):
     df_vendor = prepare_po_chart_data(df_vendor)
@@ -464,7 +483,8 @@ prs.slides._sldIdLst.remove(prs.slides._sldIdLst[0])  # remove template slide
 prs.save(output_ppt)
 
 print("✅ PPT created:", output_ppt)
-
+print("Saved PPT:", output_ppt)
+print("Exists:", os.path.exists(output_ppt))
 print("\n🎉 DONE!")
 print("• Vendor-wise PO count chart")
 print("• PO-wise Accepted / Rejected + Rejection % charts")

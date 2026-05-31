@@ -14,8 +14,21 @@ import sys
 excel_file = sys.argv[1]
 sheet_name = "Copy of Final Month Wise Defect"
 
-template_ppt = "RITES_Template.pptx"
-output_ppt = "Defect_Percentage_Pie_RITES_Final.pptx"
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+template_ppt = os.path.join(
+    BASE_DIR,
+    "RITES_Template.pptx"
+)
+
+OUTPUT_DIR = os.path.join(BASE_DIR, "output")
+os.makedirs(OUTPUT_DIR, exist_ok=True)
+
+output_ppt = os.path.join(
+    OUTPUT_DIR,
+    "Defect_Percentage_Pie_RITES_Final.pptx"
+)
 
 # ================== TARGET DEFECTS ==================
 TARGET_DEFECTS = [
@@ -294,7 +307,9 @@ prs = Presentation(template_ppt)
 
 base_slide = prs.slides[0]
 
-os.makedirs("charts_pct", exist_ok=True)
+
+CHARTS_DIR = os.path.join(BASE_DIR, "charts_pct")
+os.makedirs(CHARTS_DIR, exist_ok=True)
 
 for i in range(0, len(data_combined), 2):
 
@@ -337,7 +352,10 @@ for i in range(0, len(data_combined), 2):
                  .replace("\\", "_")
         )
 
-        img_path = f"charts_pct/{safe_plant_name}.png"
+        img_path = os.path.join(
+            CHARTS_DIR,
+            f"{safe_plant_name}.png"
+        )
 
         success = plot_pie(
             row_pct,
@@ -369,3 +387,5 @@ prs.slides._sldIdLst.remove(
 prs.save(output_ppt)
 
 print(" FINAL PPT CREATED:", output_ppt)
+print("Saved PPT:", output_ppt)
+print("Exists:", os.path.exists(output_ppt))

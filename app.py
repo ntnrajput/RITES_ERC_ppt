@@ -13,10 +13,18 @@ OUTPUT_FOLDER = "output"
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 os.makedirs(OUTPUT_FOLDER, exist_ok=True)
 
+
 @app.route('/download/<filename>')
 def download_file(filename):
+
+    full_path = os.path.join("output", filename)
+
+    print("DOWNLOAD REQUEST:", filename)
+    print("FILE EXISTS:", os.path.exists(full_path))
+    print("FULL PATH:", os.path.abspath(full_path))
+
     return send_from_directory(
-        'output',
+        "output",
         filename,
         as_attachment=True
     )
@@ -75,26 +83,31 @@ def run_all():
         if result3.returncode != 0:
             return f"<pre>PPT3 Error\n\n{result3.stderr}</pre>"
 
+        
+        print("OUTPUT FOLDER CONTENTS:")
+        print(os.listdir("output"))
+
         return """
-            <h2>Success</h2>
+        <h2>Reports Generated Successfully</h2>
 
-            
-            <a href="/download/ERC_Defect_Analysis_RITES_FINAL.pptx">
-            Download PPT1
-            </a>
+        <br>
 
-            <br><br>
+        <a href="/download/ERC_Defect_Analysis_RITES_FINAL.pptx">
+        Download PPT1
+        </a>
 
-            <a href="/download/PPT2_Report.pptx">
-            Download PPT2
-            </a>
+        <br><br>
 
-            <br><br>
+        <a href="/download/Vendor_PO_Quality_Analysis.pptx">
+        Download PPT2
+        </a>
 
-            <a href="/download/PPT3_Report.pptx">
-            Download PPT3
-            </a>
-            """
+        <br><br>
+
+        <a href="/download/Defect_Percentage_Pie_RITES_Final.pptx">
+        Download PPT3
+        </a>
+        """
 
     except Exception as e:
         return str(e)
